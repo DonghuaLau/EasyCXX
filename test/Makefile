@@ -1,0 +1,14 @@
+
+CXX=g++
+FLAGS=
+INC=-I../src/common
+LIB=
+
+MEMORY_POOL_TEST=memory_pool_test
+MEMORY_POOL_INC=-I../src/common
+MEMORY_POOL_TEST_SRC=$(MEMORY_POOL_TEST).cpp
+
+
+test:
+	$(CXX) $(FLAGS) $(MEMORY_POOL_INC) $(LIB) $(MEMORY_POOL_TEST_SRC) -D MEMORY_POOL_TEST -o $(MEMORY_POOL_TEST)
+
