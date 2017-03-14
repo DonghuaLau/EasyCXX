@@ -7,17 +7,17 @@
 	#include "common/errors.h"
 #endif
 
+//#define ECBUFFER
+#ifdef ECBUFFER
+	#include "common/byte_buffer.h"
+#endif
+
 #ifdef MEMORY_POOL
 	#include "common/memory_pool.h"
 #endif
 
 #ifdef ESOCKET
-	#include <sys/socket.h>
-	#include <netinet/in.h>
-	#include <arpa/inet.h>
-	#include "esocket/socket.h"
-	#include "esocket/tcp_socket.h"
-	#include "esocket/udp_socket.h"
+	#include "esocket/esocket.h"
 #endif
 
 #endif

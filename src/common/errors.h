@@ -8,13 +8,17 @@ enum ECError
 {
 	 OK 		= 0
 	,SUCCESS 	= 0
-	,ERROR 		= 1
-	,FAILED 	= 1
+	,ERROR 		= -1
+	,FAILED 	= -1
 	// > 10000, errno compatible
 
-	// socket errors
-	,SOCK_ERR_CONNECT 		= 10001
-	,SOCK_ERR_INET_PTON 	= 10002
+	// socket errors: esocket/esocket_errors.h
+	
+	// buffer errors
+	,BUFFER_NOT_ENOUGH		= 20001
+
 };
+
+}
 
 #endif

@@ -26,7 +26,7 @@ public:
 	template <class value_type>
 	value_type *construct(int size = 1)
 	{
-		if(size < 1 || size > _capacity)
+		if(size < 1 /*|| size > _capacity*/)
 		{
 			return NULL; 
 		}
@@ -37,7 +37,7 @@ public:
 	template <class value_type, class param1_type>
 	value_type *construct(param1_type param1, int size = 1)
 	{
-		if(size < 1 || size > _capacity)
+		if(size < 1 /*|| size > _capacity*/)
 		{
 			return NULL; 
 		}
@@ -48,7 +48,7 @@ public:
 	template <class value_type, class param1_type, class param2_type>
 	value_type *construct(param1_type param1, param2_type param2, int size = 1)
 	{
-		if(size < 1 || size > _capacity)
+		if(size < 1 /*|| size > _capacity*/)
 		{
 			return NULL; 
 		}
@@ -59,7 +59,7 @@ public:
 	template <class value_type, class param1_type, class param2_type, class param3_type>
 	value_type *construct(param1_type param1, param2_type param2, param3_type param3, int size = 1)
 	{
-		if(size < 1 || size > _capacity)
+		if(size < 1 /*|| size > _capacity*/)
 		{
 			return NULL; 
 		}

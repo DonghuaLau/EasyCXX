@@ -1,9 +1,11 @@
-#include "easycxx.h"
+#include "tcp_socket.h"
+
+#include "errors.h"
 
 namespace easycxx
 {
 
-ETCPSocket::ETCPSocket():
+ETCPSocket::ETCPSocket()
 {
 	_host = "0.0.0.0";
 	_port = 0;
@@ -51,14 +53,14 @@ int ETCPSocket::connect(std::string remote_host, int remote_port)
 		return SOCK_ERR_INET_PTON;
 	} 
 
-	if( connect(_socket, (struct sockaddr *)&remote_addr, sizeof(remote_addr)) < 0 )
+	if( ::connect(_socket, (struct sockaddr *)&remote_addr, sizeof(remote_addr)) < 0 )
 	{
 		std::cerr << "socket connect failed, remote host: " << remote_host << ", remote port: " << remote_port << std::endl;
 		_last_error = errno;
 		return SOCK_ERR_CONNECT;
 	} 
 
-	return OK;
+	return SCOK_OK;
 }
 
 int ETCPSocket::be_server()
@@ -87,31 +89,83 @@ int ETCPSocket::be_server()
 		return _last_error;
 	}
 
-	return OK;
+	return SCOK_OK;
 }
 
 int ETCPSocket::accept(accept_callback fcallback)
 {
 	struct sockaddr client_addr;
-	int connfd = accept(listenfd, (struct sockaddr*)&client_addr, sizeof(client_addr)); 
+	unsigned int client_addr_len = sizeof(client_addr);
+	int connfd = ::accept(_socket, (struct sockaddr*)&client_addr, &client_addr_len ); 
 
-	snprintf(sendBuff, sizeof(sendBuff), "%.24s\r\n", ctime(&ticks));
+	//snprintf(sendBuff, sizeof(sendBuff), "%.24s\r\n", ctime(&ticks));
 
 	return connfd;
 }
 
-int ETCPSocket::send(void *buffer, int &buffer_length)
+int ETCPSocket::send(EByteBuffer &byte_buffer)
 {
-	return OK;
+	ssize_t write_size = ::write(_socket, byte_buffer.get_buffer(), byte_buffer.size());
+	if(write_size == -1)
+	{
+		std::cerr << "socket send failed." << std::endl;
+		_last_error = errno;
+	}
+
+	return write_size;
 }
 
-int ETCPSocket::recv(void **buffer, int &buffer_length)
+/*
+ *	if BUFFER_NOT_ENOUGH occurs, call again, it's not an error.
+ */
+int ETCPSocket::recv(EByteBuffer &byte_buffer)
 {
-	return OK;
+	byte *pbuffer = NULL;
+	static size_t count = 4096;
+	ssize_t read_size = 0;
+	ssize_t total_size = 0;
+	int push_size = 0;
+	do
+	{
+		// checking buffer's remain size first is better
+		if(byte_buffer.get_remain_size() < count)
+		{
+			std::cout << "socket recv, buffer is not enough." << std::endl;
+			_last_error = BUFFER_NOT_ENOUGH;
+			break;
+		}
+
+		read_size = ::read(_socket, pbuffer, count);
+		if(read_size <= 0)
+		{
+			break;
+		}
+
+		total_size += read_size;
+		push_size = byte_buffer.push_back(pbuffer, read_size);
+		if(push_size < read_size)
+		{
+			// if this happens, it's a serious error. Data'll be lost. 
+			std::cerr << "socket recv, buffer error." << std::endl;
+			_last_error = BUFFER_NOT_ENOUGH;
+			break;
+		}
+	}
+	while(true);
+
+	if(read_size < 0)
+	{
+		std::cerr << "socket recv failed." << std::endl;
+		_last_error = errno;
+		return ERROR;
+	}
+
+	return total_size;
 }
 
-int ETCPSocket::recv_asyn(void **buffer, int &buffer_length)
+int ETCPSocket::recv_asyn(EByteBuffer &byte_buffer)
 {
+	return SCOK_OK;
 }
 
 }
