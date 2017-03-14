@@ -27,6 +27,7 @@ public:
 	const int size(); // Why can't declare inline 
 	const int get_remain_size();
 	const int capacity();
+	void clear();	
 
 };
 

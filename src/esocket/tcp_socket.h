@@ -39,10 +39,14 @@ public:
 	virtual int connect(std::string remote_host, int remote_port); // client
 	//virtual int be_server(std::string remote_host, int remote_port); // server
 	virtual int be_server(); // server
-	virtual int accept(accept_callback fcallback);
+	//virtual int accept(accept_callback fcallback);
+	virtual int accept();
 	virtual int send(EByteBuffer &byte_buffer);
-	virtual int recv(EByteBuffer &byte_buffer);
-	virtual int recv_asyn(EByteBuffer &byte_buffer);
+	//virtual int recv(EByteBuffer &byte_buffer);
+	virtual int recv(int conn, EByteBuffer &byte_buffer);
+	//virtual int recv_asyn(EByteBuffer &byte_buffer);
+	//virtual int close(); // close self
+	virtual int close(const int conn); // close client
 
 	virtual const int get_last_error()
 	{

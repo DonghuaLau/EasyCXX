@@ -26,10 +26,10 @@ EByteBuffer::~EByteBuffer()
 // length -1 means all bytes
 const byte *EByteBuffer::get_buffer(const int start, int &length) const
 {
-	std::cout << "[" << __func__ << "] start pos: " << start << ", length: " << length << std::endl;
+	std::cout << "[" << __func__ << "] start pos: " << start << ", end pos: " << _end_pos << ", length: " << length << std::endl;
 	if(start >= _end_pos){ return NULL; }
-	if(start + length > _end_pos){ length = _end_pos - start; }
 	if(length == -1){ length = _end_pos+1; }
+	if(start + length > _end_pos){ length = _end_pos - start; }
 	return _buffer + start;
 }
 
@@ -63,5 +63,9 @@ const int EByteBuffer::capacity()
 	return _buffer_size;
 }
 
+void EByteBuffer::clear()
+{
+	_end_pos = 0;
+}
 
 }
