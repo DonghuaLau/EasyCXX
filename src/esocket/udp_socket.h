@@ -4,11 +4,11 @@
 namespace easycxx
 {
 
-class EUDPSocket
+class UDPSocket
 {
 public:
-	EUDPSocket(){}
-	virtual ~EUDPSocket(){}
+	UDPSocket(){}
+	virtual ~UDPSocket(){}
 };
 
 }

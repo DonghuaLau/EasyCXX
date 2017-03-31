@@ -10,7 +10,7 @@
 // test tcp socket 
 void tcp_socket_test()
 {
-	easycxx::ETCPSocket tcp_sock("127.0.0.1", 1800);
+	easycxx::TCPSocket tcp_sock("127.0.0.1", 1800);
 	tcp_sock.be_server();
 
 	//tcp_sock.connect(std::string("127.0.0.1"), 1800);

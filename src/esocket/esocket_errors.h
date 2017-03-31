@@ -4,7 +4,7 @@
 namespace easycxx
 {
 
-enum ESocketError
+enum SocketError
 {
 	 SCOK_OK				= 2000
 

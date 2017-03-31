@@ -6,7 +6,7 @@
 namespace easycxx
 {
 
-class ETCPSocket : public ESocket
+class TCPSocket : public Socket
 {
 private:
 	int _socket;
@@ -27,9 +27,9 @@ private:
 	int init();
 
 public:
-	ETCPSocket();
-	ETCPSocket(std::string host, int port);
-	virtual ~ETCPSocket();
+	TCPSocket();
+	TCPSocket(std::string host, int port);
+	virtual ~TCPSocket();
 
 	void set_backlog(int backlog)
 	{

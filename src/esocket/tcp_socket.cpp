@@ -5,25 +5,25 @@
 namespace easycxx
 {
 
-ETCPSocket::ETCPSocket()
+TCPSocket::TCPSocket()
 {
 	_host = "0.0.0.0";
 	_port = 80;
 	init();
 }
 
-ETCPSocket::ETCPSocket(std::string host, int port):
+TCPSocket::TCPSocket(std::string host, int port):
 	_host(host), _port(port)
 {
 	init();
 }
 
-ETCPSocket::~ETCPSocket()
+TCPSocket::~TCPSocket()
 {
 	::close(_socket);
 }
 
-int ETCPSocket::init()
+int TCPSocket::init()
 {
 	_backlog = 10;
 
@@ -39,7 +39,7 @@ int ETCPSocket::init()
 	return 0;
 }
 
-int ETCPSocket::connect(std::string remote_host, int remote_port)
+int TCPSocket::connect(std::string remote_host, int remote_port)
 {
 	_remote_host = remote_host;
 	_remote_port = remote_port;
@@ -64,7 +64,7 @@ int ETCPSocket::connect(std::string remote_host, int remote_port)
 	return SCOK_OK;
 }
 
-int ETCPSocket::be_server()
+int TCPSocket::be_server()
 {
 	struct sockaddr_in server_addr;
 	server_addr.sin_family = AF_INET;
@@ -93,8 +93,8 @@ int ETCPSocket::be_server()
 	return SCOK_OK;
 }
 
-//int ETCPSocket::accept(accept_callback fcallback)
-int ETCPSocket::accept()
+//int TCPSocket::accept(accept_callback fcallback)
+int TCPSocket::accept()
 {
 	struct sockaddr client_addr;
 	unsigned int client_addr_len = sizeof(client_addr);
@@ -105,7 +105,7 @@ int ETCPSocket::accept()
 	return connfd;
 }
 
-int ETCPSocket::send(EByteBuffer &byte_buffer)
+int TCPSocket::send(EByteBuffer &byte_buffer)
 {
 	ssize_t write_size = ::write(_socket, byte_buffer.get_buffer(), byte_buffer.size());
 	std::cout << "[" << __func__ << "] send size: " << write_size << ", buffer size: " << byte_buffer.size() << std::endl;
@@ -121,7 +121,7 @@ int ETCPSocket::send(EByteBuffer &byte_buffer)
 /*
  *	if BUFFER_NOT_ENOUGH occurs, call again, it's not an error.
  */
-int ETCPSocket::recv(int conn, EByteBuffer &byte_buffer)
+int TCPSocket::recv(int conn, EByteBuffer &byte_buffer)
 {
 	std::cout << "[" << __func__ << "] conn: " << conn << std::endl;
 	byte pbuffer[4096];
@@ -169,17 +169,17 @@ int ETCPSocket::recv(int conn, EByteBuffer &byte_buffer)
 	return total_size;
 }
 
-//int ETCPSocket::close()
+//int TCPSocket::close()
 //{
 //	return ::close(_socket);
 //}
 
-int ETCPSocket::close(const int conn)
+int TCPSocket::close(const int conn)
 {
 	return ::close(conn);
 }
 
-//int ETCPSocket::recv_asyn(EByteBuffer &byte_buffer)
+//int TCPSocket::recv_asyn(EByteBuffer &byte_buffer)
 //{
 //	return SCOK_OK;
 //}

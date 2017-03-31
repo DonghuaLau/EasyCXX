@@ -18,11 +18,11 @@ typedef int (*accept_callback)(const int &client_socket, const std::string &remo
 //typedef (*recv_callback)(void *buffer, int buffer_length);
 
 
-class ESocket
+class Socket
 {
 public:
-	ESocket(){}
-	virtual ~ESocket(){}
+	Socket(){}
+	virtual ~Socket(){}
 
 	virtual int connect(std::string remote_host, int remote_port) = 0;
 	//virtual int be_server(std::string remote_host, int remote_port) = 0;

@@ -15,7 +15,7 @@ void tcp_socket_test()
 	easycxx::EByteBuffer buffer;
 	buffer.push_back(text, len);
 
-	easycxx::ETCPSocket tcp_sock;
+	easycxx::TCPSocket tcp_sock;
 	int ret = tcp_sock.connect(std::string("127.0.0.1"), 1800);
 	std::cout << "connect ret: " << ret << std::endl;
 	ret = tcp_sock.send(buffer);
@@ -30,9 +30,9 @@ void tcp_socket_test_2()
 	easycxx::EByteBuffer buffer;
 	buffer.push_back(text, len);
 
-	//easycxx::ETCPSocket tcp_sock();
-	easycxx::ETCPSocket *tcp_sock;
-	tcp_sock = new easycxx::ETCPSocket();
+	//easycxx::TCPSocket tcp_sock();
+	easycxx::TCPSocket *tcp_sock;
+	tcp_sock = new easycxx::TCPSocket();
 	int ret = tcp_sock->connect(std::string("127.0.0.1"), 1800);
 	std::cout << "connect ret: " << ret << std::endl;
 	ret = tcp_sock->send(buffer);
