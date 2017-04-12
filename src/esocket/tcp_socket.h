@@ -48,9 +48,20 @@ public:
 	//virtual int close(); // close self
 	virtual int close(const int conn); // close client
 
-	virtual const int get_last_error()
+	const int get_last_error()
 	{
 		return _last_error;
+	}
+	
+	bool get_remote_host_and_port(std::string &host, int &port)
+	{	
+		host = _remote_host;
+		port = _remote_port;
+	}
+	
+	int get_fd()
+	{
+		return _fd;
 	}
 };
 

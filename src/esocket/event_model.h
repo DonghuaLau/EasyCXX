@@ -18,13 +18,23 @@
 namespace easycxx
 {
 
+typedef hash_map<int, Connection*> ConnectionMap; // key: fd
+//typedef hash_map<int, Processor*> ProcessorMap; // key: fd
+
 class EventModel
 {
 public:
-	EventModel(){}
-	virtual ~EventModel(){}
+	EventModel();
+	virtual ~EventModel();
 
 	virtual bool init(int max_events = 1024, bool is_server = false) = 0;
+	virtual int add(const Connection &conn) = 0;
+	virtual int cancel(const Connection &conn) = 0;
+	virtual int modify(const Connection &conn) = 0;
+	virtual int poll() = 0;
+	virtual int select(int timeout = 10) = 0;
+	virtual int get_last_error() = 0;
+
 };
 
 }

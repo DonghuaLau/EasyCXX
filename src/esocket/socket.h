@@ -37,6 +37,8 @@ public:
 	virtual int close(const int conn) = 0;
 
 	virtual const int get_last_error() = 0;
+	virtual bool get_remote_host_and_port(std::string &host, int &port) = 0;
+	virtual inline int get_fd() = 0;
 };
 
 }

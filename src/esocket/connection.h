@@ -9,13 +9,20 @@ namespace easycxx
 class Connection
 {
 public:
-	Connection()
-	~Connection()
+	Connection();
+	~Connection();
+
+	int get_conn();
 
 private:
-	int _conn;
+	//int _fd; // equal to Socket::_socket
 	Socket *_socket;
-}
+	Processor *_processor;
+
+	bool _open;
+
+	int _last_error;
+};
 
 }
 
