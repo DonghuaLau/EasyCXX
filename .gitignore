@@ -8,3 +8,4 @@ trash
 *.bak
 *_test
 tags
+a.out
