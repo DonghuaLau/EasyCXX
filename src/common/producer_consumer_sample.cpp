@@ -1,3 +1,6 @@
+
+// Reference: https://github.com/forhappy/Cplusplus-Concurrency-In-Practice/blob/master/zh/chapter11-Application/11.1%20Producer-Consumer-solution.md
+
 #include <unistd.h>
 
 #include <cstdlib>
@@ -6,7 +9,7 @@
 #include <mutex>
 #include <thread>
 
-static const int kItemRepositorySize  = 4; // Item buffer size.
+static const int kItemRepositorySize  = 2; // Item buffer size.
 static const int kItemsToProduce  = 10;   // How many items we plan to produce.
 
 struct ItemRepository {
@@ -60,6 +63,8 @@ int ConsumeItem(ItemRepository *ir)
     if (ir->read_position >= kItemRepositorySize)
         ir->read_position = 0;
 
+	//usleep(10000);
+
     (ir->repo_not_full).notify_all();
     lock.unlock();
 
@@ -70,17 +75,18 @@ void ProducerTask()
 {
     bool ready_to_exit = false;
     while(1) {
-        sleep(1);
         std::unique_lock<std::mutex> lock(gItemRepository.produced_item_counter_mtx);
         if (gItemRepository.produced_item_counter < kItemsToProduce) {
             ++(gItemRepository.produced_item_counter);
             ProduceItem(&gItemRepository, gItemRepository.produced_item_counter);
             std::cout << "Producer thread " << std::this_thread::get_id()
                 << " is producing the " << gItemRepository.produced_item_counter
-                << "^th item" << std::endl;
+                << "^th item\n";
+                //<< "^th item" << std::endl;
         } else ready_to_exit = true;
         lock.unlock();
         if (ready_to_exit == true) break;
+        //sleep(3);
     }
     std::cout << "Producer thread " << std::this_thread::get_id()
                 << " is exiting..." << std::endl;
@@ -90,16 +96,18 @@ void ConsumerTask()
 {
     bool ready_to_exit = false;
     while(1) {
-        sleep(1);
+        //sleep(1);
         std::unique_lock<std::mutex> lock(gItemRepository.consumed_item_counter_mtx);
         if (gItemRepository.consumed_item_counter < kItemsToProduce) {
             int item = ConsumeItem(&gItemRepository);
             ++(gItemRepository.consumed_item_counter);
             std::cout << "Consumer thread " << std::this_thread::get_id()
-                << " is consuming the " << item << "^th item" << std::endl;
+                << " is consuming the " << item << "^th item\n";
+                //<< " is consuming the " << item << "^th item" << std::endl;
         } else ready_to_exit = true;
         lock.unlock();
         if (ready_to_exit == true) break;
+        //sleep(4);
     }
     std::cout << "Consumer thread " << std::this_thread::get_id()
                 << " is exiting..." << std::endl;
@@ -116,6 +124,7 @@ void InitItemRepository(ItemRepository *ir)
 int main()
 {
     InitItemRepository(&gItemRepository);
+
     std::thread producer1(ProducerTask);
     std::thread producer2(ProducerTask);
     std::thread producer3(ProducerTask);
@@ -124,7 +133,7 @@ int main()
     std::thread consumer1(ConsumerTask);
     std::thread consumer2(ConsumerTask);
     std::thread consumer3(ConsumerTask);
-    std::thread consumer4(ConsumerTask);
+    //std::thread consumer4(ConsumerTask);
 
     producer1.join();
     producer2.join();
@@ -134,5 +143,7 @@ int main()
     consumer1.join();
     consumer2.join();
     consumer3.join();
-    consumer4.join();
+    //consumer4.join();
+
+	return 0;
 }
