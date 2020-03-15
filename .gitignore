@@ -8,4 +8,8 @@ trash
 *.bak
 *_test
 tags
+<<<<<<< HEAD
 a.out
+=======
+*.out
+>>>>>>> 6d062de0e372b9f53bc49a32bde6d2510ca59f1f
