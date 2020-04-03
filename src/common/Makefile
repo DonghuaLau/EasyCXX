@@ -10,3 +10,6 @@ all:
 
 clean:
 	@echo "common clean"
+
+pc:
+	g++ producer_consumer.cpp --std=c++11

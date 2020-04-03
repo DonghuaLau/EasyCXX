@@ -1,8 +1,5 @@
 #include "epoll-utils.h"
 
-
-
-
 void SetNonBlock(int fd)
 {
     int flag = fcntl ( fd, F_GETFL, 0 );
