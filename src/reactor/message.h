@@ -1,7 +1,7 @@
 #ifndef _EC_MESSAGE_H_
 #define _EC_MESSAGE_H_
 
-#include "arch.h"
+#include "common.h"
 
 using namespace std;
 

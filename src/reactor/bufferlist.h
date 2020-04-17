@@ -1,10 +1,13 @@
 #ifndef _EC_BUFFERLIST_H_
 #define _EC_BUFFERLIST_H_
 
+#include <list>
+using namespace std;
 
 namespace ec
 {
-#define unsigned char byte
+
+typedef unsigned char byte;
 
 class Buffer
 {
@@ -34,6 +37,11 @@ public:
 		}
 	}
 
+	void *get_ptr()
+	{
+		return _buf;
+	}
+
 	void *get_ptr(const int capacity, int pos = 0)
 	{
 		if(pos < 0 || capacity <= 0 || _capacity - pos < capacity) return nullptr;
@@ -46,12 +54,12 @@ public:
 		else _len = len;
 	}
 
-	void get_length()
+	int get_length()
 	{
 		return _len;
 	}
 
-	void get_capacity()
+	int get_capacity()
 	{
 		return _capacity;
 	}
@@ -60,6 +68,7 @@ public:
 class BufferList
 {
 private:
+	int _size = 0;
 	list<shared_ptr<Buffer> > _buf_list; // 采用指针避免多次拷贝
 
 public:
@@ -68,10 +77,19 @@ public:
 
 	void append(shared_ptr<Buffer> &buffer)
 	{
-		_list.push_back(buffer); 
+		_buf_list.push_back(buffer); 
+		_size += buffer->get_length();
 	}
 
-	//TODO: get
+	int get_size()
+	{
+		return _size;
+	}
+
+	list<shared_ptr<Buffer> > & get_list()
+	{
+		return _buf_list;
+	}
 };
 
 }; // namespace ec

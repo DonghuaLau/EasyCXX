@@ -3,31 +3,33 @@
 
 #include <sys/types.h>
 #include <sys/event.h>
-//#include <sys/time.h>
-
-#include "poller.h"
+#include <sys/time.h>
+#include "poller_base.h"
 
 namespace ec
 {
 
-class KQueuePoller
+class EventDispatcher;
+
+class KQueuePoller : public EventPoller
 {
 private:
     int _kqfd = 0;
-    shared_ptr<struct kevent> _events;
+    //shared_ptr<struct kevent> _events; // C++11的shared_ptr不支持数组
+    struct kevent *_events;
 	EventDispatcher &_event_dispatcher;
 
 public:
-	KQueuePoller(EventDispatcher &dispatcher, int setsize);
+	KQueuePoller(int setsize, EventDispatcher &dispatcher);
 	virtual ~KQueuePoller();
 
-	inline virtual int create();
+	virtual int create();
 	virtual int add_event(const int fd, const int mask);
 	virtual int del_event(const int fd, const int mask);
-	virtual int event_poll(const struct timeval &timeout);
-	inline virtual int resize(const int setsize);
-	inline virtual int destory();
-	inline virtual string &get_name();
+	virtual int event_poll(const struct timeval *tvp);
+	virtual int resize(const int setsize);
+	virtual int destory();
+	virtual string &get_name();
 };
 
 }; // namespace ec
