@@ -1,12 +1,12 @@
 #ifndef _EC_EPOLL_POLLER_H_
 #define _EC_EPOLL_POLLER_H_
 
-#include "poller.h"
+#include "poller_base.h"
 
 namespace ec
 {
 
-class EPollPoller
+class EPollPoller : public EventPoller
 {
 private:
 	EventDispatcher &_event_dispatcher;
@@ -27,7 +27,7 @@ public:
 	virtual int event_poll(struct timeval &timeout);
 	virtual int destory();
 	virtual int resize(int setsize);
-	inline virtual string &get_name();
+	virtual string &get_name();
 
 };
 

@@ -1,6 +1,10 @@
 #ifndef _EC_ARCH_H_
 #define _EC_ARCH_H_
 
+#ifdef __APPLE__
+	#include <AvailabilityMacros.h>
+#endif
+
 /*
 #define IS_X86
 #define IS_X64
@@ -29,7 +33,7 @@
 	#endif
 #endif
 
-#ifdef _WIN32 || _MSC_VER // TODO
+#if (defined(_WIN32) || defined(_MSC_VER)) // TODO
 	#define HAVE_IOCTL 1	
 	#define IS_WINDOWS 1	
 #endif

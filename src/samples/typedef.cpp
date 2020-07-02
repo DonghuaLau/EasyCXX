@@ -3,6 +3,8 @@ using namespace std;
 
 class A
 {
+	int a;
+	string b;
 public:
 	void print()
 	{
@@ -18,4 +20,8 @@ int main()
 	B b;
 	a.print();
 	b.print();
+
+	shared_ptr<B> pb;
+	pb = make_shared<B>();
+	pb->print();
 }

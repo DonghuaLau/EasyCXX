@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 3.5)
+
+project (reactor)
+
+set(LIB_REACTOR_NAME libreactor)
+set(REACTOR_SRC handle.cpp handler.cpp dispatcher.cpp poller_kqueue.)
+
+aux_source_directory(. DIR_SRCS)
+
+set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
+set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
+
+add_library(${LIB_REACTOR_NAME} STATIC ${REACTOR_SRC})
+#target_link_libraries(${LIB_REACTOR_NAME} PRIVATE ${LIB_REACTOR_NAME})
+
