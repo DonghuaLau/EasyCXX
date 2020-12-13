@@ -165,7 +165,7 @@ int main()
             }
             else if(events[i].events&EPOLLIN)     /**读事件**/
             {
-                //fprintf(stderr, "EPOLLIN................%d\n", maxi++);
+                fprintf(stderr, "EPOLLIN: %d, fd: %d\n", maxi++, events[i].data.fd);
                 if ( (sockfd = events[i].data.fd) < 0)
                 {
                     continue;
@@ -178,7 +178,6 @@ int main()
                     n += nread;
                 }//读到EAGAIN，说明读完了
 
-
                 if(nread == -1 && errno != EAGAIN)
                 {
                     epoll_ctl_err_show();
@@ -190,12 +189,15 @@ int main()
 
                 //这里要加上判断，nread为0时，说明客户端已经关闭
                 //此时，需要关闭描述符，否则在/proc/id/fd下能看到描述符会一直存在
+                char *str = inet_ntoa(clientaddr.sin_addr);
                 if(nread == 0)
                 {
                     close(sockfd);
+                    std::cout << "close from " << str << std::endl;
                     continue;
                 }
 
+                std::cout << "read from " << str << ": " << line << std::endl;
 
                 ev.data.fd=sockfd; //设置用于写操作的文件描述符
                 ev.events=EPOLLOUT | EPOLLET; //设置用于注测的写操作事件
