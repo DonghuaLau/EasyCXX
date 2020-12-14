@@ -7,6 +7,8 @@ using namespace std;
 
 typedef FD int
 
+#define MAX_SOCK_BUF_SIZE 4096
+
 enum POLLERROR
 {
     E_OK        = 0,
@@ -23,7 +25,7 @@ public:
     FD get_fd(){ return _fd; }
     virtual Handler *accept(FD fd) = 0;
     virtual int input(char *buf, int nbuf) = 0;
-    virtual int output(char *buf, int nbuf) = 0;
+    virtual int output(char *buf, int max_nbuf) = 0;
 };
 
 class Poller
