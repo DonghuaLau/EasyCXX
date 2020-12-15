@@ -1,14 +1,14 @@
 #include "epoll-utils.h"
 
-void SetNonBlock(int fd)
+void setnonblock(int fd)
 {
     int flag = fcntl ( fd, F_GETFL, 0 );
     fcntl ( fd, F_SETFL, flag | O_NONBLOCK );
 }
 
-void usage()
+void usage(char *name)
 {
-	printf("Usage: %s <host> <port> <message>");
+	printf("Usage: %s <host> <port> <message>", name);
 }
 
 int main(int argc, char** argv)
@@ -18,7 +18,7 @@ int main(int argc, char** argv)
     if(4 != argc)
     {
         //printf("Parameter: ServerIP Message ServerPort\n");
-        usage();
+        usage(argv[0]);
         return RET_ERR;
     }
 
@@ -66,7 +66,7 @@ int main(int argc, char** argv)
         return RET_ERR;
     }
 
-    SetNonBlock(sk);
+    setnonblock(sk);
 
     int efd;
     efd = epoll_create(10);
@@ -107,8 +107,8 @@ int main(int argc, char** argv)
         {
             if(events[i].events & EPOLLOUT)
             {
-                printf("EPOLLOUT...............\n");
-                snprintf(buffer, BUFSIZE, "i am process %d, just say: %s\n", getpid(), msg);
+                printf("EPOLLOUT\n");
+                snprintf(buffer, BUFSIZE, "i am process %d, just say: %s.", getpid(), msg);
 
                 int n = strlen(buffer);
                 int nsend = 0;
@@ -130,7 +130,7 @@ int main(int argc, char** argv)
 
             if(events[i].events & EPOLLIN)
             {
-                printf("EPOLLIN...............\n");
+                printf("EPOLLIN\n");
                 memset(buffer, 0, BUFSIZE);
 
                 int len = strlen(buffer);
