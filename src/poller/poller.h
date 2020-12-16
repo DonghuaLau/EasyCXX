@@ -18,61 +18,24 @@ enum POLLERROR
 
 class Handler
 {
-protected:
+private:
     FD _fd;
 public:
     Handler():_fd(0) {}
+    void set_fd(FD &fd){ _fd = fd; }
     FD get_fd(){ return _fd; }
-    virtual Handler *accept(FD fd) = 0;
+    virtual Handler *create(FD &fd) = 0;
     virtual int input(char *buf, int nbuf) = 0;
     virtual int output(char *buf, int max_nbuf) = 0;
 };
 
 class Poller
 {
-protected:
-    //map<FD, *Handler> _client_handlers;
-    //map<FD, *Handler> _listen_handlers;
 public:
     Poller(){}
-    int add(Handler *hd, bool is_listen = false);
-    /*{
-        if(hd == NULL || hd->get_fd() <= 0)
-        {
-            return E_INVALID;
-        }
-        [>
-         *if(_handler_map.find(hd->get_fd()) != _handler_map.end())
-         *{
-         *    return E_EXIST;
-         *}
-         *_handler_map.insert(pair<FD, *Handler>(hd->get_fd(), hd));
-         *if(is_listen) _listen_fd = hd->get_fd();
-         <]
-        return E_OK;
-    }*/
-
-    int del(Handler *hd)
-    {
-        return del(hd->get_fd());
-    }
-
-    int del(FD fd);
-    {
-        auto it = _client_handlers.find(fd);
-        if(it != _client_handlers.end())
-        {
-            _client_handlers.erase(it);
-        }
-        it = _listen_handlers.find(fd);
-        if(it != _listen_handlers.end())
-        {
-            _listen_handlers.erase(it);
-            return E_OK;
-        }
-        return E_OK;
-    }
-
+    virtual int add(Handler *hd, bool is_listen = false);
+    virtual int del(Handler *hd) = 0;
+    virtual int del(FD fd) = 0;
     virtual int poll() = 0;
 };
 

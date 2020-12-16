@@ -1,6 +1,7 @@
 #ifndef _EPOLL_H_
 #define _EPOLL_H_
 
+#include <chrono>
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
@@ -11,17 +12,30 @@
 #include <sys/epoll.h>
 #include "poller.h"
 
-class EPoll
+class EPoll : public Poller
 {
 private:
     FD _epoll_fd;
+    bool _is_short_conn;
     map<FD, *Handler> _client_handlers;
     map<FD, *Handler> _listen_handlers;
+
+private:
+    int del_client(map<FD, *Handler>::iterator &it);
+    {
+        _client_handlers.erase(it);
+        close(fd);
+        //epoll_ctl(_epoll_fd, EPOLL_CTL_DEL, fd, &events[i]); // TODO: delete from epoll?
+        return E_OK;
+    }
 public:
-    EPoll(const int size = 256)
+    EPoll(const int size = 256):_is_short_conn(false)
     {
         _epoll_fd = epoll_create(size); // TODO: error!!!
     }
+
+    void set_short_conn(bool is_short){ _is_short_conn = is_short; }
+    bool is_short_conn(){ return _is_short_conn; }
 
     int add(Handler *hd, bool is_listen = false)
     {
@@ -55,6 +69,30 @@ public:
         return E_OK;
     }
 
+    virtual int del(Handler *hd)
+    {
+        return del(hd->get_fd());
+    }
+
+    virtual int del(FD fd);
+    {
+        auto it = _client_handlers.find(fd);
+        if(it != _client_handlers.end())
+        {
+            _client_handlers.erase(it);
+        }
+        it = _listen_handlers.find(fd);
+        if(it != _listen_handlers.end())
+        {
+            _listen_handlers.erase(it);
+        }
+
+        close(fd);
+        //epoll_ctl(_epoll_fd, EPOLL_CTL_DEL, fd, &events[i]); // TODO: delete from epoll?
+
+        return E_OK;
+    }
+
     virtual int poll(const int max_event_size = 100, const int timeout = -1)
     {
         struct epoll_event *events = new struct epoll_event[max_event_size];
@@ -67,6 +105,7 @@ public:
         socklen_t sock_len;
         char buf[MAX_SOCK_BUF_SIZE];
         int total = 0, nread = 0, nwrite = 0;
+        Handler *sock_hd;
 
         while(true)
         {
@@ -91,6 +130,8 @@ public:
                         epoll_ctl(_epoll_fd, EPOLL_CTL_ADD, conn_fd, &ev); // TODO: error!!!
 
                         // TODO: add to map and create Handler
+                        sock_hd = it->second->create(conn_fd);
+                        add(sock_hd);
                     }
                 }
                 else if(events[i].events & EPOLLIN)     /* read event */
@@ -111,7 +152,7 @@ public:
                     }
 
                     //memset(buf, 0, MAX_SOCK_BUF_SIZE); // not recommended
-                    buf[0] = 0, total = 0, nread = 0;
+                    total = 0, nread = 0;
 
                     while((nread= read(sock_fd, buf + total, MAX_SOCK_BUF_SIZE)) > 0)
                     {
@@ -121,16 +162,15 @@ public:
                     if(nread == -1 && errno != EAGAIN)
                     {
                         std::cout << "read socket error: " << errno << ", fd: " << sock_fd << std::endl;
-                        close(sock_fd);
                         events[i].data.fd = -1; // makes epoll auto delete this fd?
-                        //epoll_ctl(_epoll_fd, EPOLL_CTL_DEL, sock_fd, &events[i]); // TODO: delete from epoll?
+                        del_client(it);
                         continue;
                     }
 
                     if(nread == 0) // client is closed
                     {
-                        close(sock_fd);
                         std::cout << "the client is colsed, we close either, addr: " << inet_ntoa(client_addr.sin_addr) << std::endl;
+                        del_client(it);
                         continue;
                     }
 
@@ -173,9 +213,13 @@ public:
                     epoll_ctl(_epoll_fd, EPOLL_CTL_MOD, sock_fd, &ev);
 
                     // TODO: close socket if it's short connection
+                    if(it->second->is_short_conn)
+                    {
+                        del_client(it);
+                    }
                 }
-            }
-        }
+            } // end for
+        } // end while
     }
 
 private:
